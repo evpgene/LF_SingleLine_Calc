@@ -1,0 +1,1 @@
+ReactorData = table('Size',[6 2],'VariableTypes',["double" "double"], 'VariableNames',["R" "X"], 'Description',["Таблица с данными реактора"])

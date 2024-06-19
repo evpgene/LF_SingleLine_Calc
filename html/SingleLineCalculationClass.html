@@ -1,0 +1,325 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>SingleLineCalculationClass</title>
+<meta name="generator" content="MATLAB 24.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-06-18">
+<meta name="DC.source" content="SingleLineCalculationClass.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<pre class="codeinput">
+<span class="keyword">classdef</span> SingleLineCalculationClass &lt; handle
+    <span class="comment">%SingleLineCalculationClass Однолинейный расчёт</span>
+    <span class="comment">%   однолинейный расчёт электрического контура печи</span>
+    <span class="keyword">properties</span>
+
+        Rarc_max = 100; <span class="comment">% проверить</span>
+        Npoints = 1000;
+        NetworkTransformer
+        Reactor
+        FurnaceTransformer
+        ShortCircuit
+        ParallelLoad
+
+        Ntap
+
+    <span class="keyword">end</span>
+
+    <span class="keyword">methods</span>
+        <span class="keyword">function</span> obj = SingleLineCalculationClass(NetworkTransformerData,ReactorData,FurnaceTransformerData,ParallelLoadData,SC_A, SC_B)
+            <span class="comment">%SingleLineCalculationClass Конструирует экземпляр этого класса</span>
+            <span class="comment">%   Из заданных параметров - Создает экземпляры классов, представляющих импеданс и</span>
+            <span class="comment">%   коэффициенты трансформации различных компонентов</span>
+            <span class="comment">%   электрического контура печи.</span>
+            obj.NetworkTransformer = NetworkTransformerClass(NetworkTransformerData);
+            obj.Reactor = ReactorClass(ReactorData);
+            obj.FurnaceTransformer = FurnaceTransformerClass(FurnaceTransformerData);
+            obj.ShortCircuit = ShortCircuitClass(SC_A, SC_B);
+            obj.ParallelLoad = ParalellLoadClass(ParallelLoadData);
+            obj.Ntap = size(FurnaceTransformerData,1);
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> r = computeOneTap(obj, Uhv,Ntr, Nre,Nntr,Npos,parallelOn, THD)
+            <span class="comment">% вычисление для одной ступени печного трансформатора</span>
+
+            K = obj.FurnaceTransformer.getK(Ntr);
+
+            Z2uptoMV_mean = obj.FurnaceTransformer.getZ(Ntr) + obj.Reactor.getZ(Nre,K) + <span class="keyword">...</span>
+                obj.ShortCircuit.getZmean(Npos);  <span class="comment">% импеданс пересчитанный ...</span>
+            <span class="comment">% на вторичную сторону печного трансформатора исключая сетевой</span>
+            <span class="comment">% трансформатор (до среднего напряжения)</span>
+
+            Z2uptoHV_mean = Z2uptoMV_mean + <span class="keyword">...</span>
+                obj.NetworkTransformer.getZ(Nntr,K); <span class="comment">% импеданс...</span>
+            <span class="comment">% пересчитанный на вторичную сторону печного трансформатора включая сетевой ...</span>
+            <span class="comment">% трансформатор (до высокого напряжения)</span>
+
+            <span class="keyword">if</span> parallelOn
+                Z2parallel = obj.ParallelLoad.getZ(obj.FurnaceTransformer.getK(Ntr));
+            <span class="keyword">else</span>
+                Z2parallel = 999999999+999999999i;
+            <span class="keyword">end</span>
+            Rarc =linspace(0, obj.Rarc_max,obj.Npoints); <span class="comment">% заполняет массив с заданным шагом</span>
+            r.Zarc = complex(Rarc,Rarc.*THD);
+
+            r.Z2_LV_tot = r.Zarc + obj.ShortCircuit.getZmean(Npos);
+            r.Z2_MV_tot = r.Zarc + Z2uptoMV_mean;
+            r.Z2_MV_tot_parallel = r.Z2_MV_tot * Z2parallel/(r.Z2_MV_tot + Z2parallel);
+
+
+            r.Z2_HV_tot = r.Zarc + Z2uptoHV_mean;
+            r.Z2_HV_tot_parallel =  r.Z2_MV_tot_parallel + obj.NetworkTransformer.getZ(Nntr,K);
+
+            r.E2_ph = obj.FurnaceTransformer.getE2(obj.NetworkTransformer.getE2(Uhv,Nntr),Ntr)/sqrt(3);
+
+            r.I2parallel = r.E2_ph./r.Z2_MV_tot_parallel;
+
+            r.UMV = r.E2_ph - r.I2parallel*obj.NetworkTransformer.getZ(Nntr,K);
+
+
+            r.I2 =r.UMV./r.Z2_MV_tot;
+
+            r.Parc = abs(r.I2).^2.*real(r.Zarc)./1000.0*3.0;
+            r.Sarc = r.I2.^2.*r.Zarc./1000.0*3.0;
+            r.Uarc = r.I2.*real(r.Zarc);
+            r.Larc =  r.Uarc-40.0;
+            r.Ploss_MV = real(Z2uptoMV_mean)*abs(r.I2).^2.*3/1000;
+            r.absI2 = abs(r.I2);
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> r = compute(obj, Uhv, Nre,Nntr,Npos,parallelOn,THD)
+            <span class="comment">% вычисление для всех ступеней печного трансформатора</span>
+            r.Z2_LV_tot = zeros(obj.Npoints,obj.Ntap);
+            r.Z2_MV_tot = zeros(obj.Npoints,obj.Ntap);
+            r.Z2_HV_tot = zeros(obj.Npoints,obj.Ntap);
+            r.U2_ph = zeros(1,obj.Ntap);
+            r.I2  = zeros(obj.Npoints,obj.Ntap);
+            r.Parc  = zeros(obj.Npoints,obj.Ntap);
+            r.Sarc  = zeros(obj.Npoints,obj.Ntap);
+            r.Uarc  = zeros(obj.Npoints,obj.Ntap);
+            r.Larc  = zeros(obj.Npoints,obj.Ntap);
+            r.Ploss_MV  = zeros(obj.Npoints,obj.Ntap);
+
+            <span class="keyword">for</span> i = 1:obj.Ntap
+                tmp = computeOneTap(obj, Uhv,i, Nre,Nntr,Npos,parallelOn,THD);
+
+                r.Z2_LV_tot(:,i) = transpose(tmp.Z2_LV_tot);
+                r.Z2_MV_tot(:,i) = transpose(tmp.Z2_MV_tot);
+                r.Z2_HV_tot(:,i) = transpose(tmp.Z2_HV_tot);
+                <span class="comment">%r.U2_ph(1,i) = transpose(tmp.U2_ph);</span>
+                r.UMV  = transpose(tmp.UMV);
+                r.I2(:,i)  = transpose(tmp.I2);
+                r.I2parallel(:,i)  = transpose(tmp.I2parallel);
+                r.Z2_MV_tot_parallel = transpose(tmp.Z2_MV_tot_parallel);
+                r.Zarc(:,i)  = transpose(tmp.Zarc);
+                r.Parc(:,i)  = transpose(tmp.Parc);
+                r.Sarc(:,i)  = transpose(tmp.Sarc);
+                r.Uarc(:,i)  = transpose(tmp.Uarc);
+                r.Larc(:,i)  = transpose(tmp.Larc);
+                r.Ploss_MV(:,i)  = transpose(tmp.Ploss_MV);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre>
+<pre class="codeoutput error">Not enough input arguments.
+
+Error in SingleLineCalculationClass (line 24)
+            obj.NetworkTransformer = NetworkTransformerClass(NetworkTransformerData);
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024a</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+classdef SingleLineCalculationClass < handle
+    %SingleLineCalculationClass Однолинейный расчёт
+    %   однолинейный расчёт электрического контура печи
+    properties
+
+        Rarc_max = 100; % проверить
+        Npoints = 1000;
+        NetworkTransformer
+        Reactor
+        FurnaceTransformer
+        ShortCircuit
+        ParallelLoad
+
+        Ntap
+
+    end
+
+    methods
+        function obj = SingleLineCalculationClass(NetworkTransformerData,ReactorData,FurnaceTransformerData,ParallelLoadData,SC_A, SC_B)
+            %SingleLineCalculationClass Конструирует экземпляр этого класса
+            %   Из заданных параметров - Создает экземпляры классов, представляющих импеданс и
+            %   коэффициенты трансформации различных компонентов
+            %   электрического контура печи.
+            obj.NetworkTransformer = NetworkTransformerClass(NetworkTransformerData);
+            obj.Reactor = ReactorClass(ReactorData);
+            obj.FurnaceTransformer = FurnaceTransformerClass(FurnaceTransformerData);
+            obj.ShortCircuit = ShortCircuitClass(SC_A, SC_B);
+            obj.ParallelLoad = ParalellLoadClass(ParallelLoadData);
+            obj.Ntap = size(FurnaceTransformerData,1);
+        end
+
+        function r = computeOneTap(obj, Uhv,Ntr, Nre,Nntr,Npos,parallelOn, THD)
+            % вычисление для одной ступени печного трансформатора
+
+            K = obj.FurnaceTransformer.getK(Ntr);
+
+            Z2uptoMV_mean = obj.FurnaceTransformer.getZ(Ntr) + obj.Reactor.getZ(Nre,K) + ...
+                obj.ShortCircuit.getZmean(Npos);  % импеданс пересчитанный ...
+            % на вторичную сторону печного трансформатора исключая сетевой
+            % трансформатор (до среднего напряжения)
+
+            Z2uptoHV_mean = Z2uptoMV_mean + ...
+                obj.NetworkTransformer.getZ(Nntr,K); % импеданс...
+            % пересчитанный на вторичную сторону печного трансформатора включая сетевой ...
+            % трансформатор (до высокого напряжения)
+
+            if parallelOn
+                Z2parallel = obj.ParallelLoad.getZ(obj.FurnaceTransformer.getK(Ntr));
+            else
+                Z2parallel = 999999999+999999999i;
+            end
+            Rarc =linspace(0, obj.Rarc_max,obj.Npoints); % заполняет массив с заданным шагом
+            r.Zarc = complex(Rarc,Rarc.*THD);
+
+            r.Z2_LV_tot = r.Zarc + obj.ShortCircuit.getZmean(Npos);
+            r.Z2_MV_tot = r.Zarc + Z2uptoMV_mean;
+            r.Z2_MV_tot_parallel = r.Z2_MV_tot * Z2parallel/(r.Z2_MV_tot + Z2parallel);
+
+
+            r.Z2_HV_tot = r.Zarc + Z2uptoHV_mean;
+            r.Z2_HV_tot_parallel =  r.Z2_MV_tot_parallel + obj.NetworkTransformer.getZ(Nntr,K);
+
+            r.E2_ph = obj.FurnaceTransformer.getE2(obj.NetworkTransformer.getE2(Uhv,Nntr),Ntr)/sqrt(3);
+
+            r.I2parallel = r.E2_ph./r.Z2_MV_tot_parallel;
+
+            r.UMV = r.E2_ph - r.I2parallel*obj.NetworkTransformer.getZ(Nntr,K);
+
+
+            r.I2 =r.UMV./r.Z2_MV_tot;
+
+            r.Parc = abs(r.I2).^2.*real(r.Zarc)./1000.0*3.0;
+            r.Sarc = r.I2.^2.*r.Zarc./1000.0*3.0;
+            r.Uarc = r.I2.*real(r.Zarc);
+            r.Larc =  r.Uarc-40.0;
+            r.Ploss_MV = real(Z2uptoMV_mean)*abs(r.I2).^2.*3/1000;
+            r.absI2 = abs(r.I2);
+        end
+
+        function r = compute(obj, Uhv, Nre,Nntr,Npos,parallelOn,THD)
+            % вычисление для всех ступеней печного трансформатора
+            r.Z2_LV_tot = zeros(obj.Npoints,obj.Ntap);
+            r.Z2_MV_tot = zeros(obj.Npoints,obj.Ntap);
+            r.Z2_HV_tot = zeros(obj.Npoints,obj.Ntap);
+            r.U2_ph = zeros(1,obj.Ntap);
+            r.I2  = zeros(obj.Npoints,obj.Ntap);
+            r.Parc  = zeros(obj.Npoints,obj.Ntap);
+            r.Sarc  = zeros(obj.Npoints,obj.Ntap);
+            r.Uarc  = zeros(obj.Npoints,obj.Ntap);
+            r.Larc  = zeros(obj.Npoints,obj.Ntap);
+            r.Ploss_MV  = zeros(obj.Npoints,obj.Ntap);
+
+            for i = 1:obj.Ntap
+                tmp = computeOneTap(obj, Uhv,i, Nre,Nntr,Npos,parallelOn,THD);
+
+                r.Z2_LV_tot(:,i) = transpose(tmp.Z2_LV_tot);
+                r.Z2_MV_tot(:,i) = transpose(tmp.Z2_MV_tot);
+                r.Z2_HV_tot(:,i) = transpose(tmp.Z2_HV_tot);
+                %r.U2_ph(1,i) = transpose(tmp.U2_ph);
+                r.UMV  = transpose(tmp.UMV);
+                r.I2(:,i)  = transpose(tmp.I2);
+                r.I2parallel(:,i)  = transpose(tmp.I2parallel);
+                r.Z2_MV_tot_parallel = transpose(tmp.Z2_MV_tot_parallel);
+                r.Zarc(:,i)  = transpose(tmp.Zarc);
+                r.Parc(:,i)  = transpose(tmp.Parc);
+                r.Sarc(:,i)  = transpose(tmp.Sarc);
+                r.Uarc(:,i)  = transpose(tmp.Uarc);
+                r.Larc(:,i)  = transpose(tmp.Larc);
+                r.Ploss_MV(:,i)  = transpose(tmp.Ploss_MV);
+            end
+        end
+    end
+end
+
+
+##### SOURCE END #####
+-->
+</body>
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>Calculation_LF2_US</title>
+<meta name="generator" content="MATLAB 24.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-06-18">
+<meta name="DC.source" content="Calculation_LF2_US.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<pre class="codeinput">load(<span class="string">'Calculation_LF2_US.mat'</span>)
+
+Calculation = SingleLineCalculationClass(NetworkTransformerData, ReactorData, FurnaceTransformerData, ParallelLoadData, SC_A, SC_B);
+
+Npos = 1; <span class="comment">% позиция обработки 1</span>
+Nre = 1; <span class="comment">% ступень реактора (реактор отсутствует)</span>
+
+<span class="keyword">for</span> EAF_On = 0:1
+    <span class="keyword">switch</span> EAF_On
+        <span class="keyword">case</span> 1
+            ParallelLoadData.R1 = 9.48;
+            ParallelLoadData.X1 = 9.48;
+            EAF_On_txt = <span class="string">', ДСП в работе'</span>;
+        <span class="keyword">otherwise</span>
+            ParallelLoadData.R1 = 9999;
+            ParallelLoadData.X1 = 9999;
+            EAF_On_txt = <span class="string">', ДСП не в работе'</span>;
+    <span class="keyword">end</span>
+
+    <span class="keyword">for</span> Nntr = 1:17
+        Nntr_txt = strcat(<span class="string">', ступень сетевого трансформатора = '</span>,string(Nntr));
+        figsuffix_txt = strcat(Nntr_txt,EAF_On_txt);
+        r = Calculation.compute(220000,Nre,Nntr,Npos,EAF_On,0.06);
+<span class="comment">%///////////////////////////////////////////////////////////////////////////////////////////////////////////////</span>
+        figname_txt = <span class="string">'Длина дуги '</span>;
+        fignamefull_txt = strcat(figname_txt,figsuffix_txt);
+
+        <span class="comment">% конструктор окна диаграммы</span>
+        f = figure(<span class="string">"Name"</span>,figname_txt);
+        <span class="comment">% отключить строку меню</span>
+        f.MenuBar = <span class="string">"none"</span>;
+        f.ToolBar = <span class="string">"none"</span>;
+        <span class="comment">%   отключить 'figure n' в ярлыке окна</span>
+        f.NumberTitle = <span class="string">"off"</span>;
+        f.Position(3:4) = [1280 960];
+
+        <span class="comment">% построить график</span>
+        h = plot(abs(r.I2), real(r.Larc));
+        <span class="comment">% толщина линий</span>
+        set(h,LineWidth=1.25);
+
+        <span class="comment">% Размер шрифта</span>
+        fontsize(f,12,<span class="string">"points"</span>)
+        <span class="comment">% Заголовок и название осей</span>
+        title(fignamefull_txt,<span class="string">'FontSize'</span>,14)
+        xlabel(<span class="string">'Ток, [кА]'</span>)
+        ylabel(<span class="string">'Длина дуги, [мм]'</span>)
+        <span class="comment">% пределы отображения по осям</span>
+        xlim([0 100])
+        ylim([0 200])
+        <span class="comment">% сетка</span>
+        grid <span class="string">on</span>
+        grid <span class="string">minor</span>
+        <span class="comment">% легенда</span>
+        label = {<span class="string">'1'</span> <span class="string">'2'</span> <span class="string">'3'</span> <span class="string">'4'</span> <span class="string">'5'</span> <span class="string">'6'</span> <span class="string">'7'</span> <span class="string">'8'</span> <span class="string">'9'</span>};
+        legend(label,<span class="string">'Location'</span>,<span class="string">'best'</span>);
+        <span class="comment">% сохранение результатов</span>
+        <span class="comment">%saveas(f,'diagramtst.pdf')</span>
+        orient(f,<span class="string">'landscape'</span>)
+
+        <span class="keyword">if</span> (exist(<span class="string">'Diagrams'</span>, <span class="string">'dir'</span>)) ~= 7
+            mkdir <span class="string">'Diagrams'</span>;
+        <span class="keyword">end</span>
+        printpath_txt = strcat(<span class="string">'Diagrams\'</span>, fignamefull_txt);
+        print(printpath_txt,<span class="string">'-dpdf'</span>,<span class="string">'-fillpage'</span>);
+        <span class="comment">% деструктор окна диаграммы</span>
+        delete(f);
+<span class="comment">%///////////////////////////////////////////////////////////////////////////////////////////////////////////////</span>
+<span class="comment">%///////////////////////////////////////////////////////////////////////////////////////////////////////////////</span>
+        figname_txt = <span class="string">'Мощность дуги'</span>;
+        fignamefull_txt = strcat(figname_txt,figsuffix_txt);
+
+        <span class="comment">% конструктор окна диаграммы</span>
+        f = figure(<span class="string">"Name"</span>,figname_txt);
+        <span class="comment">% отключить строку меню</span>
+        f.MenuBar = <span class="string">"none"</span>;
+        f.ToolBar = <span class="string">"none"</span>;
+        <span class="comment">%   отключить 'figure n' в ярлыке окна</span>
+        f.NumberTitle = <span class="string">"off"</span>;
+        f.Position(3:4) = [1280 960];
+
+        <span class="comment">% построить график</span>
+        h = plot(abs(r.I2), r.Parc);
+        <span class="comment">% толщина линий</span>
+        set(h,LineWidth=1.25);
+
+        <span class="comment">% Размер шрифта</span>
+        fontsize(f,12,<span class="string">"points"</span>)
+        <span class="comment">% Заголовок и название осей</span>
+        title(fignamefull_txt,<span class="string">'FontSize'</span>,14)
+        xlabel(<span class="string">'Ток, [кА]'</span>)
+        ylabel(<span class="string">'Мощность дуги, [МВт]'</span>)
+        <span class="comment">% пределы отображения по осям</span>
+        xlim([0 100])
+        ylim([0 25])
+        <span class="comment">% сетка</span>
+        grid <span class="string">on</span>
+        grid <span class="string">minor</span>
+        <span class="comment">% легенда</span>
+        label = {<span class="string">'1'</span> <span class="string">'2'</span> <span class="string">'3'</span> <span class="string">'4'</span> <span class="string">'5'</span> <span class="string">'6'</span> <span class="string">'7'</span> <span class="string">'8'</span> <span class="string">'9'</span>};
+        legend(label,<span class="string">'Location'</span>,<span class="string">'best'</span>);
+        <span class="comment">% сохранение результатов</span>
+        <span class="comment">%saveas(f,'diagramtst.pdf')</span>
+        orient(f,<span class="string">'landscape'</span>)
+
+        <span class="keyword">if</span> (exist(<span class="string">'Diagrams'</span>, <span class="string">'dir'</span>)) ~= 7
+            mkdir <span class="string">'Diagrams'</span>;
+        <span class="keyword">end</span>
+        printpath_txt = strcat(<span class="string">'Diagrams\'</span>, fignamefull_txt);
+        print(printpath_txt,<span class="string">'-dpdf'</span>,<span class="string">'-fillpage'</span>);
+        <span class="comment">% деструктор окна диаграммы</span>
+        delete(f);
+<span class="comment">%///////////////////////////////////////////////////////////////////////////////////////////////////////////////</span>
+<span class="comment">%///////////////////////////////////////////////////////////////////////////////////////////////////////////////</span>
+        figname_txt = <span class="string">'Ток '</span>;
+        fignamefull_txt = strcat(figname_txt,figsuffix_txt);
+
+        <span class="comment">% конструктор окна диаграммы</span>
+        f = figure(<span class="string">"Name"</span>,figname_txt);
+        <span class="comment">% отключить строку меню</span>
+        f.MenuBar = <span class="string">"none"</span>;
+        f.ToolBar = <span class="string">"none"</span>;
+        <span class="comment">%   отключить 'figure n' в ярлыке окна</span>
+        f.NumberTitle = <span class="string">"off"</span>;
+        f.Position(3:4) = [1280 960];
+
+        <span class="comment">% построить график</span>
+        h = plot(real(r.Z2_LV_tot), abs(r.I2));
+        <span class="comment">% толщина линий</span>
+        set(h,LineWidth=1.25);
+
+        <span class="comment">% Размер шрифта</span>
+        fontsize(f,12,<span class="string">"points"</span>)
+        <span class="comment">% Заголовок и название осей</span>
+        title(fignamefull_txt,<span class="string">'FontSize'</span>,14)
+        xlabel(<span class="string">'Импеданс, [Ом]'</span>)
+        ylabel(<span class="string">'Ток, [кА]'</span>)
+        <span class="comment">% пределы отображения по осям</span>
+        xlim([1 12])
+        ylim([20 35])
+        <span class="comment">% сетка</span>
+        grid <span class="string">on</span>
+        grid <span class="string">minor</span>
+        <span class="comment">% легенда</span>
+        label = {<span class="string">'1'</span> <span class="string">'2'</span> <span class="string">'3'</span> <span class="string">'4'</span> <span class="string">'5'</span> <span class="string">'6'</span> <span class="string">'7'</span> <span class="string">'8'</span> <span class="string">'9'</span>};
+        legend(label,<span class="string">'Location'</span>,<span class="string">'best'</span>);
+        <span class="comment">% сохранение результатов</span>
+        <span class="comment">%saveas(f,'diagramtst.pdf')</span>
+        orient(f,<span class="string">'landscape'</span>)
+
+        <span class="keyword">if</span> (exist(<span class="string">'Diagrams'</span>, <span class="string">'dir'</span>)) ~= 7
+            mkdir <span class="string">'Diagrams'</span>;
+        <span class="keyword">end</span>
+        printpath_txt = strcat(<span class="string">'Diagrams\'</span>, fignamefull_txt);
+        print(printpath_txt,<span class="string">'-dpdf'</span>,<span class="string">'-fillpage'</span>);
+        <span class="comment">% деструктор окна диаграммы</span>
+        delete(f);
+<span class="comment">%///////////////////////////////////////////////////////////////////////////////////////////////////////////////</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024a</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+
+load('Calculation_LF2_US.mat')
+
+Calculation = SingleLineCalculationClass(NetworkTransformerData, ReactorData, FurnaceTransformerData, ParallelLoadData, SC_A, SC_B);
+
+Npos = 1; % позиция обработки 1
+Nre = 1; % ступень реактора (реактор отсутствует)
+
+for EAF_On = 0:1
+    switch EAF_On
+        case 1
+            ParallelLoadData.R1 = 9.48;
+            ParallelLoadData.X1 = 9.48;
+            EAF_On_txt = ', ДСП в работе';
+        otherwise
+            ParallelLoadData.R1 = 9999;
+            ParallelLoadData.X1 = 9999;
+            EAF_On_txt = ', ДСП не в работе';
+    end
+
+    for Nntr = 1:17
+        Nntr_txt = strcat(', ступень сетевого трансформатора = ',string(Nntr));
+        figsuffix_txt = strcat(Nntr_txt,EAF_On_txt);
+        r = Calculation.compute(220000,Nre,Nntr,Npos,EAF_On,0.06);
+%///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        figname_txt = 'Длина дуги ';
+        fignamefull_txt = strcat(figname_txt,figsuffix_txt);
+
+        % конструктор окна диаграммы
+        f = figure("Name",figname_txt);
+        % отключить строку меню
+        f.MenuBar = "none";
+        f.ToolBar = "none";
+        %   отключить 'figure n' в ярлыке окна
+        f.NumberTitle = "off";
+        f.Position(3:4) = [1280 960];
+
+        % построить график
+        h = plot(abs(r.I2), real(r.Larc));
+        % толщина линий
+        set(h,LineWidth=1.25);
+
+        % Размер шрифта
+        fontsize(f,12,"points")
+        % Заголовок и название осей
+        title(fignamefull_txt,'FontSize',14)
+        xlabel('Ток, [кА]')
+        ylabel('Длина дуги, [мм]')
+        % пределы отображения по осям
+        xlim([0 100])
+        ylim([0 200])
+        % сетка
+        grid on
+        grid minor
+        % легенда
+        label = {'1' '2' '3' '4' '5' '6' '7' '8' '9'};
+        legend(label,'Location','best');
+        % сохранение результатов
+        %saveas(f,'diagramtst.pdf')
+        orient(f,'landscape')
+
+        if (exist('Diagrams', 'dir')) ~= 7
+            mkdir 'Diagrams';
+        end
+        printpath_txt = strcat('Diagrams\', fignamefull_txt);
+        print(printpath_txt,'-dpdf','-fillpage');
+        % деструктор окна диаграммы
+        delete(f);
+%///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+%///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        figname_txt = 'Мощность дуги';
+        fignamefull_txt = strcat(figname_txt,figsuffix_txt);
+
+        % конструктор окна диаграммы
+        f = figure("Name",figname_txt);
+        % отключить строку меню
+        f.MenuBar = "none";
+        f.ToolBar = "none";
+        %   отключить 'figure n' в ярлыке окна
+        f.NumberTitle = "off";
+        f.Position(3:4) = [1280 960];
+
+        % построить график
+        h = plot(abs(r.I2), r.Parc);
+        % толщина линий
+        set(h,LineWidth=1.25);
+
+        % Размер шрифта
+        fontsize(f,12,"points")
+        % Заголовок и название осей
+        title(fignamefull_txt,'FontSize',14)
+        xlabel('Ток, [кА]')
+        ylabel('Мощность дуги, [МВт]')
+        % пределы отображения по осям
+        xlim([0 100])
+        ylim([0 25])
+        % сетка
+        grid on
+        grid minor
+        % легенда
+        label = {'1' '2' '3' '4' '5' '6' '7' '8' '9'};
+        legend(label,'Location','best');
+        % сохранение результатов
+        %saveas(f,'diagramtst.pdf')
+        orient(f,'landscape')
+
+        if (exist('Diagrams', 'dir')) ~= 7
+            mkdir 'Diagrams';
+        end
+        printpath_txt = strcat('Diagrams\', fignamefull_txt);
+        print(printpath_txt,'-dpdf','-fillpage');
+        % деструктор окна диаграммы
+        delete(f);
+%///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+%///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        figname_txt = 'Ток ';
+        fignamefull_txt = strcat(figname_txt,figsuffix_txt);
+
+        % конструктор окна диаграммы
+        f = figure("Name",figname_txt);
+        % отключить строку меню
+        f.MenuBar = "none";
+        f.ToolBar = "none";
+        %   отключить 'figure n' в ярлыке окна
+        f.NumberTitle = "off";
+        f.Position(3:4) = [1280 960];
+
+        % построить график
+        h = plot(real(r.Z2_LV_tot), abs(r.I2));
+        % толщина линий
+        set(h,LineWidth=1.25);
+
+        % Размер шрифта
+        fontsize(f,12,"points")
+        % Заголовок и название осей
+        title(fignamefull_txt,'FontSize',14)
+        xlabel('Импеданс, [Ом]')
+        ylabel('Ток, [кА]')
+        % пределы отображения по осям
+        xlim([1 12])
+        ylim([20 35])
+        % сетка
+        grid on
+        grid minor
+        % легенда
+        label = {'1' '2' '3' '4' '5' '6' '7' '8' '9'};
+        legend(label,'Location','best');
+        % сохранение результатов
+        %saveas(f,'diagramtst.pdf')
+        orient(f,'landscape')
+
+        if (exist('Diagrams', 'dir')) ~= 7
+            mkdir 'Diagrams';
+        end
+        printpath_txt = strcat('Diagrams\', fignamefull_txt);
+        print(printpath_txt,'-dpdf','-fillpage');
+        % деструктор окна диаграммы
+        delete(f);
+%///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    end
+end
+
+
+##### SOURCE END #####
+-->
+</body>
+</html>
